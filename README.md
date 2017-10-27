@@ -1,14 +1,16 @@
-# eduroam-imap-playbook
+# eduroam-imap-playbook Ansible playbook
 
-This is an Ansible playbook to set up [eduroam](https://eduroam.org/) authentication against an IMAP server.
+This is an [Ansible playbook](http://docs.ansible.com/ansible/latest/playbooks.html) to set up [eduroam](https://eduroam.org/) authentication against an IMAP server.
 
 Our main use-case for this is allowing [Google GSuite](https://gsuite.google.com/) users to authenticate on eduroam. However, the concept should be extensible to any IMAP server.
 
 ## Using the playbook
 
+All configuration happens in [group_vars/all](group_vars/all). You should edit that file to suit your enviroment.
+
 The playbook has been set up to be readily used in a [Vagrant](https://www.vagrantup.com/) enviroment with [VirtualBox](https://www.virtualbox.org/) as the provider. In such an enviroment, the following should get you going:
 
-```
+```bash
 git clone https://github.ac.za/safire-ac-za/eduroam-imap-playbook.git
 cd eduroam-imap-playbook
 vagrant up
@@ -46,21 +48,21 @@ There are a couple of things that are not configured by the playbook and may req
 
 You can test the PAM component like this:
 
-```
-pamtester pam-imap-radius *USERNAME* authenticate
+```bash
+pamtester pam-imap-radius $USERNAME authenticate
 ```
 
 You can test the inner EAP tunnel line this:
 
-```
-radtest -t pap *USERNAME*@*REALM* *PASSWORD* localhost:18121 0 testing123
+```bash
+radtest -t pap $USERNAME@$REALM $PASSWORD localhost:18121 0 testing123
 ```
 
 A complete EAP test can be done with [eapol_test](http://deployingradius.com/scripts/eapol_test/) and [rad_eap_test](https://github.com/safire-ac-za/rad_eap_test) as below. However neither of these two applications are installed by this Ansible role.
 
-```
-rad_eap_test -H localhost -P 1812 -S testing123 -u *USERNAME*@*REALM* -A anon
-ymous@*REALM* -p *PASSWORD* -m WPA-EAP -s eduroam -e TTLS -2 PAP
+```bash
+rad_eap_test -H localhost -P 1812 -S testing123 -u $USERNAME@$REALM -A anon
+ymous@$REALM -p $PASSWORD -m WPA-EAP -s eduroam -e TTLS -2 PAP
 ```
 
 ## Limitations
@@ -71,5 +73,4 @@ Because FreeRADIUS has no access to a cleartext password, only PAP can be used a
 
 ### Scalability
 
-Setting up an IMAP connection is slow and more resource intensive than other authentication methods. This means that the IMAP approach likely does not scale! *pam_imap* does do some caching of credentials which may improve this. Nevertheless you should really only consider this for the smallest of sites.
-
+Setting up an IMAP connection is slow (~ 2 seconds) and more resource intensive than other authentication methods. This means that the IMAP approach likely does not scale! *pam_imap* does do some caching of credentials which may improve this. Nevertheless you should really only consider this for the smallest of sites.
