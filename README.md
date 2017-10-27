@@ -69,8 +69,12 @@ ymous@$REALM -p $PASSWORD -m WPA-EAP -s eduroam -e TTLS -2 PAP
 
 ### EAP-TTLS/PAP
 
-Because FreeRADIUS has no access to a cleartext password, only PAP can be used as an inner/phase two authentication method. This typically means you need to configure clients to use TTLS/PAP. This was not originally supported out-the-box by Windows, but Windows 10 now includes a TTLS supplicant.
+Because FreeRADIUS has no access to a cleartext password, only PAP can be used as an inner/phase two authentication method. This typically means you need to configure clients to use TTLS/PAP (PEAP/MSCHAPv2 will **not** work). This was not originally supported out-the-box by Windows, but Windows 10 now includes a TTLS supplicant. Likewise Android and wpasupplicant on Linux both support TTLS.
 
 ### Scalability
 
-Setting up an IMAP connection is slow (~ 2 seconds) and more resource intensive than other authentication methods. This means that the IMAP approach likely does not scale! *pam_imap* does do some caching of credentials which may improve this. Nevertheless you should really only consider this for the smallest of sites.
+Setting up an IMAP connection is slow (~ 2 seconds) and more resource intensive than other authentication methods. This means that the IMAP approach likely does not scale! **pam_imap** does do some caching of credentials which may improve this. Nevertheless you should really only consider this for the smallest of sites.
+
+### GSuite and 2FA
+
+If you're using this with Google GSuite and your account has two-factor authentication turned on, you obviously can't supply the second factor via EAP. This means you won't be able to authenticate on eduroam with your normal GSuite username and password. Fortunately Google have preempted the problem in the form of [app passwords](https://support.google.com/accounts/answer/185833?hl=en), which are designed for legacy applications that don't suppport 2FA. To authenticate on eduroam using a GSuite account that has 2FA turned on, you'll need to [generate a new app password](https://security.google.com/settings/security/apppasswords) and then use your GSuite username and the app password to connect.
