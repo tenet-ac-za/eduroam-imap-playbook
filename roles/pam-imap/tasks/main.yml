@@ -1,0 +1,110 @@
+---
+# tasks file for pam-imap
+- name: Fetch pam-imap from GitHub
+  unarchive:
+    src: https://github.com/wdoekes/pam-imap/archive/{{pam_imap_version}}.tar.gz
+    remote_src: yes
+    dest: /tmp
+    creates: /tmp/pam-imap-{{pam_imap_version}}/pam_imap.c
+  tags: pam_imap
+
+- name: Install build requirements from Apt
+  become: yes
+  apt:
+    update_cache: yes
+    name: "{{item}}"
+    state: present
+  with_items:
+    - build-essential
+    - dh-autoreconf
+    - libpam0g-dev
+    - libssl-dev
+    - libgdbm-dev
+    - pamtester
+  tags: [ pam_imap, apt ]
+
+- name: Compile pam_imap
+  shell: |2
+    # per instructions at https://github.com/wdoekes/pam-imap/blob/master/README.rst
+    ./bootstrap
+    ./configure CPPFLAGS=-DVERIFY_CERT
+    make
+  args:
+    chdir: /tmp/pam-imap-{{pam_imap_version}}
+    creates: pam_imap.so
+
+- name: Install pam_imap
+  become: yes
+  block:
+    - name: Install pam_imap.so
+      copy:
+        src: /tmp/pam-imap-{{pam_imap_version}}/pam_imap.so
+        remote_src: yes
+        # make an assumption about the gcc target
+        dest: /lib/{{ansible_userspace_architecture}}-linux-gnu/security/pam_imap.so
+        owner: root
+        group: root
+        mode: 0644
+    - name: Create documentation directories
+      file:
+        path: /usr/share/doc/{{item}}
+        state: directory
+        owner: root
+        group: root
+        mode: 0755
+      with_items:
+        - pam_imap
+        - pam_imap/examples
+    - name: Install pam_imap documentation
+      copy:
+        src: /tmp/pam-imap-{{pam_imap_version}}/{{item.src}}
+        remote_src: yes
+        dest: /usr/share/doc/pam_imap/{{item.dest}}
+        owner: root
+        group: root
+        mode: 0644
+        directory_mode: 0755
+      with_items:
+        # remote_src doesn't allow recursive copying
+        - { src: conf/check_user, dest: examples/check_user }
+        - { src: conf/imap-auth, dest: examples/imap-auth }
+        - { src: conf/login.example, dest: examples/login.example }
+        - { src: conf/pam_imap.conf, dest: examples/pam_imap.conf }
+        - { src: conf/smtp.example, dest: examples/smtp.example }
+        - { src: BUGS, dest: BUGS }
+        - { src: CREDITS, dest: CREDITS }
+        - { src: README.rst, dest: README.rst }
+        - { src: README.z_original, dest: README.z_original }
+        - { src: TODO, dest: TODO }
+        - { src: debian/copyright, dest: copyright }
+        - { src: debian/changelog, dest: changelog }
+  tags: pam_imap
+
+- name: Install pam_imap.conf config file
+  become: yes
+  template:
+    src: pam_imap.conf.j2
+    dest: /etc/security/pam_imap.conf
+    owner: root
+    group: root
+    mode: 0644
+  tags: pam_imap
+
+- name: Create cache directory
+  become: yes
+  file:
+    path: /var/cache/pam_imap
+    state: directory
+    # owner & group deliberately left out so it can be set later and still be idempotent
+    mode: 04770
+  tags: [ pam_imap ]
+
+- name: Install pam service
+  become: yes
+  template:
+    src: imap-auth.j2
+    dest: /etc/pam.d/{{pam_service_name}}
+    owner: root
+    group: root
+    mode: 0644
+  tags: pam_imap

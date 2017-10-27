@@ -1,0 +1,32 @@
+---
+- name: Set up a FreeRADIUS IdP for use with eduroam using IMAP as an identity source
+  hosts: all
+  roles:
+    - pam-imap
+    - freeradius-eduroam-pam
+
+# The roles above have deliberately been kept as generic as possible,
+# to permit their reuse for things other than this playbook. Thus we need
+# some minor fixups at the end to get them to work together.
+- name: Minor fixups for the roles
+  hosts: all
+  tasks:
+    - name: Change group of the pam_imap cache directory
+      become: yes
+      file:
+        path: /var/cache/pam_imap
+        state: directory
+        # don't change anything except owner & group or you break idempotency
+        owner: freerad
+        group: freerad
+      tags: [ pam_imap, freeradius ]
+    - name: Touch the pam_imap cache database
+      become: yes
+      copy:
+        content: ""
+        dest: /var/cache/pam_imap/pam_imap.gdbm
+        owner: freerad
+        group: freerad
+        mode: 0660
+        force: no
+      tags: [ pam_imap, freeradius ]

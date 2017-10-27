@@ -1,0 +1,34 @@
+---
+# The upstream eduroam federation-level RADIUS servers
+# These are for South Africa; get yours from your NRO
+eduroam_flr_servers:
+  - hostname: flr-cpt.eduroam.ac.za
+    ip: 155.232.195.20
+    port: 1812
+    secret: MySharedSecret
+  - hostname: flr-jnb.eduroam.ac.za
+    ip: 155.232.195.21
+    port: 1812
+    secret: MySharedSecret
+
+# Your realm for eduroam (usually your primary DNS name)
+radius_realm: example.ac.za
+
+# Details of a test account to create within your realm
+radius_test_account:
+  username: nren_radius_test
+  password: PleaseChangeThisPassword
+
+# Details of your IMAP server
+imap_server: imap.gmail.com
+imap_port: 993
+imap_ssl: yes
+
+# If your IMAP server requires a realm/domain for login (default to same as RADIUS)
+imap_realm: "{{radius_realm}}"
+
+# How long (in seconds) to cache credentials for. Set to no to disable.
+imap_cache: 600
+
+# The name of the PAM service to use for both FreeRADIUS and pam-imap
+pam_service_name: pam-imap-radius

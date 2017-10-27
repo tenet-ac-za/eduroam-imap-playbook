@@ -1,0 +1,26 @@
+###############################################################################
+###                     PAM_IMAP Configuration file
+###############################################################################
+#  This is a template to configure pam_imap for use with FreeRADIUS/eduroam
+#  For complete documentation, see /usr/share/doc/pam_imap/examples/
+
+PAM_PasswordString = Password:
+
+{% if imap_ssl %}
+# If you use a certificate that is not in the default certificate store,
+# you should specify the path to it here.
+# Note that this option should *NOT* have an equals sign
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+{% endif %}
+
+PAM_Server0 = {{"imaps:" if imap_ssl else ""}}{{imap_server|default("localhost")}}:{{imap_port|default("993")}}
+{% if imap_realm %}
+PAM_Domain = {{imap_realm}}
+{% endif %}
+PAM_BlockList = root, admin, Administrator, apache
+
+PAM_HashEnable = {{"yes" if imap_cache else "no"}}
+# This file must be writable by whatever uses PAM
+PAM_HashFile = /var/cache/pam_imap/pam_imap.gdbm
+# Keep a hash of good passwords to prevent overloading the IMAP server
+PAM_HashDelta = {{imap_cache|default("20")}}

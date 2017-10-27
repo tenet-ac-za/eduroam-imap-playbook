@@ -1,0 +1,15 @@
+# -*- text -*-
+#
+# These are the eduroam FLR servers for your country
+#
+{% for flr in eduroam_flr_servers %}
+client {{flr.hostname}} {
+	ipaddr = {{flr.ip|default("127.0.0.1")}}
+	secret = {{flr.secret|default("MySharedSecret")}}
+	require_message_authenticator = yes
+	shortname = {{flr.hostname.split('.')|first}}
+	nastype = other
+	virtual_server = eduroam
+}
+
+{% endfor %}

@@ -1,0 +1,91 @@
+# -*- text -*-
+##
+##  eap.conf -- Configuration for EAP types (PEAP, TTLS, etc.)
+##
+
+#######################################################################
+#
+#  Whatever you do, do NOT set 'Auth-Type := EAP'.  The server
+#  is smart enough to figure this out on its own.  The most
+#  common side effect of setting 'Auth-Type := EAP' is that the
+#  users then cannot use ANY other authentication method.
+#
+eap {
+	default_eap_type = peap
+	timer_expire     = 60
+	ignore_unknown_eap_types = no
+	cisco_accounting_username_bug = no
+	max_sessions = ${max_requests}
+
+	## EAP-TLS
+	#
+	#  Note that you should NOT use a globally known CA here!
+	#  e.g. using a Verisign cert as a "known CA" means that
+	#  ANYONE who has a certificate signed by them can
+	#  authenticate via EAP-TLS!  This is likely not what you want.
+	tls {
+		#
+		#  These is used to simplify later configurations.
+		#
+		certdir = ${confdir}/certs
+		cadir = ${confdir}/certs
+		private_key_password = whatever
+		private_key_file = ${certdir}/server.key
+		certificate_file = ${certdir}/server.pem
+		CA_file = ${cadir}/ca.pem
+		dh_file = ${certdir}/dh
+		random_file = /dev/urandom
+		fragment_size = 1024
+		include_length = yes
+		check_crl = no
+		cipher_list = "DEFAULT"
+
+		cache {
+			  enable = no
+			  lifetime = 24 # hours
+			  max_entries = 255
+		}
+	}
+
+	## EAP-TTLS
+	ttls {
+		default_eap_type = mschapv2
+		copy_request_to_tunnel = yes
+		use_tunneled_reply = yes
+		virtual_server = "eduroam-inner-tunnel"
+	}
+
+	##################################################
+	#
+	#  !!!!! WARNINGS for Windows compatibility  !!!!!
+	#
+	##################################################
+	#
+	#  If you see the server send an Access-Challenge,
+	#  and the client never sends another Access-Request,
+	#  then
+	#
+	#		STOP!
+	#
+	#  The server certificate has to have special OID's
+	#  in it, or else the Microsoft clients will silently
+	#  fail.  See the "scripts/xpextensions" file for
+	#  details, and the following page:
+	#
+	#	http://support.microsoft.com/kb/814394/en-us
+	#
+	##################################################
+
+	## EAP-PEAP
+	peap {
+		default_eap_type = mschapv2
+		copy_request_to_tunnel = yes
+		use_tunneled_reply = yes
+		virtual_server = "eduroam-inner-tunnel"
+	}
+
+	## EAP-MSCHAPv2
+	mschapv2 {
+		send_error = yes
+	}
+}

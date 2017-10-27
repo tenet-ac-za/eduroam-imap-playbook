@@ -1,0 +1,36 @@
+#
+#  This file contains authentication security and configuration
+#  information for each user.  Accounting requests are NOT processed
+#  through this file.  Instead, see 'acct_users', in this directory.
+#
+
+{% if radius_test_account %}
+# A local test account the NRO can use for monitoring
+{{radius_test_account.username|default("nren_radius_test")}}@{{radius_realm}}	Cleartext-Password := {{radius_test_account.password}}
+	Service-Type = Framed-User
+
+{% if use_pam %}
+# We need this format too because we use "suffix" with PAM to strip the username
+{{radius_test_account.username|default("nren_radius_test")}}	Realm == "{{radius_realm}}", Cleartext-Password := {{radius_test_account.password}}
+	Service-Type = Framed-User
+
+{% endif %}
+{% endif %}
+{% if use_pam %}
+# You can include other local (non-PAM) users like this:
+
+# icecold	Realm == "{{radius_realm}}", Cleartext-Password := "snowwhite"
+
+# otheruser	Realm == "{{radius_realm}}", Cleartext-Password := "swordfish"
+
+# This catches all remaining users and sends them to PAM
+DEFAULT	Virtual-Server == eduroam-inner-tunnel, Pam-Auth := "{{pam_service_name}}", Auth-Type := PAM
+{% else %}
+# You can include local users like this:
+
+# icecold@{{radius_realm}}	Cleartext-Password := "snowwhite"
+
+# otheruser@{{radius_realm}}	Cleartext-Password := "swordfish"
+{% endif %}
+
+# On no match, the user is denied access.
