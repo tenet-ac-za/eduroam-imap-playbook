@@ -1,5 +1,6 @@
 ---
 # defaults file for freeradius-eduroam-pam
+wpa_supplicant_version: 2.6
 
 # Everything below should be overridden, and are here merely to make
 # sure we have something to work with when the templating engine runs

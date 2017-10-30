@@ -58,7 +58,7 @@ You can test the inner EAP tunnel line this:
 radtest -t pap $USERNAME@$REALM $PASSWORD localhost:18121 0 testing123
 ```
 
-A complete EAP test can be done with [eapol_test](http://deployingradius.com/scripts/eapol_test/) and [rad_eap_test](https://github.com/safire-ac-za/rad_eap_test) as below. However neither of these two applications are installed by this Ansible role.
+A complete EAP test can be done with [eapol_test](http://deployingradius.com/scripts/eapol_test/) and [rad_eap_test](https://github.com/CESNET/rad_eap_test) like this:
 
 ```bash
 rad_eap_test -H localhost -P 1812 -S testing123 -u $USERNAME@$REALM -A anon

@@ -1,6 +1,11 @@
 ---
 # tasks file for freeradius-eduroam-pam
 - name: Install FreeRADIUS from Apt
+  # Note that we've deliberately elected to use FreeRADIUS from a
+  # package repository rather than compiling the most recent version as
+  # suggested in the eduroam docs. The assumption is that people who
+  # use this playbook are unlikely to track updates, so there's a higher
+  # chance of security updates being applied if we use a package.
   become: yes
   apt:
     update_cache: yes
@@ -10,9 +15,9 @@
     - freeradius
   tags: [ freeradius, apt ]
 
-- include_tasks: "tasks/eduroam-sp.yml"
+- import_tasks: "tasks/eduroam-sp.yml"
 
-- include_tasks: "tasks/eduroam-idp.yml"
+- import_tasks: "tasks/eduroam-idp.yml"
 
 - name: Start the FreeRADIUS service
   become: yes
@@ -20,3 +25,5 @@
     name: freeradius
     state: started
     enabled: yes
+
+- import_tasks: "tasks/eapol_test.yml"
