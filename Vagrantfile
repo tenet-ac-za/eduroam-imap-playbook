@@ -17,9 +17,9 @@ Vagrant.configure("2") do |config|
 	my.vm.network "public_network"
 	my.vm.network :forwarded_port, guest: 22, host: 2244, id: 'ssh'
 	# This helps with testing, but shouldn't be used in production
-	my.vm.synced_folder ".", "/vagrant"	
+	my.vm.synced_folder ".", "/vagrant"
   end
-  
+
   # If we use virtualbox, and if we support cloning, use it
   config.vm.provider "virtualbox" do |vb|
 	vb.linked_clone = true if Gem::Version.new(Vagrant::VERSION) >= Gem::Version.new('1.8.0')

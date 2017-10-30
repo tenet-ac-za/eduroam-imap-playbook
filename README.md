@@ -30,7 +30,7 @@ The **pam-imap** role downloads, compiles, installs, and configures the [pam-ima
 
 ### [freeradius-eduroam-pam](roles/freeradius-eduroam-pam)
 
-The **freeradius-eduroam-pam** role installs and configures FreeRADIUS to make use PAM for eduroam EAP authentication. 
+The **freeradius-eduroam-pam** role installs and configures FreeRADIUS to make use PAM for eduroam EAP authentication.
 
 The PAM-specific bits of the configuration are quite limited, and can be disabled by setting `use_pam: no`. This allows the role to be re-used more generically to set up an eduroam IdP.
 

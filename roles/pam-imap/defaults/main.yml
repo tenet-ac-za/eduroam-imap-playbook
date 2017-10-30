@@ -2,7 +2,7 @@
 # defaults file for pam-imap
 pam_imap_version: f90f4b7928b318a233c22236637ecb4f91a1515c
 
-# Everything below should be overridden, and are here merely to make 
+# Everything below should be overridden, and are here merely to make
 # sure we have something to work with when the templating engine runs
 pam_service_name: imap-auth
 imap_server: imap.gmail.com

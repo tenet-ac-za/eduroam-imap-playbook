@@ -45,5 +45,5 @@ MIT <https://github.com/safire-ac-za/eduroam-imap-playbook/LICENSE>
 Author Information
 ------------------
 
-Guy Halse <http://orcid.org/0000-0002-9388-8592>, 
+Guy Halse <http://orcid.org/0000-0002-9388-8592>,
 [Tertiary Education and Research Network of South Africa](http://www.tenet.ac.za/).
