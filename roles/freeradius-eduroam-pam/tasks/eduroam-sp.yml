@@ -1,0 +1,88 @@
+---
+#
+# Configure FreeRADIUS per eduroam technical documentation at
+# https://wiki.geant.org/display/H2eduroam/freeradius-sp
+# (as at v.38 dated 9 August 2017)
+#
+- name: Enable Status-Server
+  become: yes
+  replace:
+    path: /etc/freeradius/radiusd.conf
+    regexp: "^\\s*reject_delay\\s*=\\s*(?!0)\\d+\\s*$"
+    replace: "	reject_delay = 0"
+  notify:
+    - restart freeradius
+  tags: [ freeradius, freeradius-config, eduroam-sp ]
+
+- name: Configure eduroam virtual site
+  become: yes
+  template:
+    src: sites-available/eduroam.j2
+    dest: /etc/freeradius/sites-available/eduroam
+    mode: 0644
+  notify:
+    - restart freeradius
+  tags: [ freeradius, freeradius-config, eduroam-sp ]
+
+- name: Enable eduroam virtual site
+  become: yes
+  file:
+    state: link
+    src: /etc/freeradius/sites-available/eduroam
+    path: /etc/freeradius/sites-enabled/eduroam
+  notify:
+    - restart freeradius
+  tags: [ freeradius, freeradius-config, eduroam-sp ]
+
+- name: Dont strip Operator-Name and related attributes before proxying
+  become: yes
+  template:
+    src: attrs.pre-proxy.j2
+    dest: /etc/freeradius/attrs.pre-proxy
+    mode: 0644
+  notify:
+    - restart freeradius
+  tags: [ freeradius, freeradius-config, eduroam-sp ]
+
+# By doing this as an include, we can avoid overwriting any
+# existing client configs
+- name:
+  become: yes
+  lineinfile:
+    path: /etc/freeradius/clients.conf
+    regexp: "^\\$INCLUDE clients-eduroam-flrs.conf"
+    state: present
+    line: "$INCLUDE clients-eduroam-flrs.conf"
+  notify:
+    - restart freeradius
+  tags: [ freeradius, freeradius-config, eduroam-sp ]
+
+- name: Add client configurations
+  become: yes
+  template:
+    src: clients.conf.j2
+    dest: /etc/freeradius/clients-eduroam-flrs.conf
+    mode: 0644
+  notify:
+    - restart freeradius
+  tags: [ freeradius, freeradius-config, eduroam-sp ]
+
+- name: Add proxy configurations
+  become: yes
+  template:
+    src: proxy.conf.j2
+    dest: /etc/freeradius/proxy.conf
+    mode: 0644
+  notify:
+    - restart freeradius
+  tags: [ freeradius, freeradius-config, eduroam-sp ]
+
+- name: Add fticks module
+  become: yes
+  template:
+    src: modules/f_ticks.j2
+    dest: /etc/freeradius/modules/f_ticks
+    mode: 0644
+  notify:
+    - restart freeradius
+  tags: [ freeradius, freeradius-config, eduroam-sp ]

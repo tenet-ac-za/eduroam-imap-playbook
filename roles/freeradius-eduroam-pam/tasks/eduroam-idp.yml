@@ -1,0 +1,43 @@
+---
+#
+# Configure FreeRADIUS per eduroam technical documentation at
+# https://wiki.geant.org/display/H2eduroam/freeradius-idp
+# (as at v.27 dated 9 August 2017)
+# As noted there, you must complete the SP configuration first
+#
+- name: Tidy up the EAP config for eduroam
+  become: yes
+  template:
+    src: eap.conf.j2
+    dest: /etc/freeradius/eap.conf
+  notify:
+    - restart freeradius
+  tags: [ freeradius, freeradius-config, eduroam-idp ]
+
+- name: Configure eduroam-inner-tunnel virtual site
+  become: yes
+  template:
+    src: sites-available/eduroam-inner-tunnel.j2
+    dest: /etc/freeradius/sites-available/eduroam-inner-tunnel
+  notify:
+    - restart freeradius
+  tags: [ freeradius, freeradius-config, eduroam-idp ]
+
+- name: Enable eduroam-inner-tunnel virtual site
+  become: yes
+  file:
+    state: link
+    src: /etc/freeradius/sites-available/eduroam-inner-tunnel
+    path: /etc/freeradius/sites-enabled/eduroam-inner-tunnel
+  notify:
+    - restart freeradius
+  tags: [ freeradius, freeradius-config, eduroam-idp ]
+
+- name: Create a users file
+  become: yes
+  template:
+    src: users.j2
+    dest: /etc/freeradius/users
+  notify:
+    - restart freeradius
+  tags: [ freeradius, freeradius-config, eduroam-idp ]
