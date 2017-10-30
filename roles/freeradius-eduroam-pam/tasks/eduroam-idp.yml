@@ -5,13 +5,29 @@
 # (as at v.27 dated 9 August 2017)
 # As noted there, you must complete the SP configuration first
 #
-- name: Tidy up the EAP config for eduroam
+- name: Override the eap module config in the FreeRADIUS approved way
   become: yes
-  template:
-    src: eap.conf.j2
-    dest: /etc/freeradius/eap.conf
-  notify:
-    - restart freeradius
+  block:
+    - name: Check whether we've overwritten the default eap module
+      stat:
+        path: /etc/freeradius/mods-enabled/eap
+        follow: no
+        get_attributes: no
+        get_checksum: no
+        get_md5: no
+        get_mime: no
+      register: eap
+    - name: Disable the default eap module
+      file:
+        path: /etc/freeradius/mods-enabled/eap
+        state: absent
+      when: eap.stat.islnk is defined and eap.stat.islnk
+    - name: Install a new eduroam-ish eap module
+      template:
+        src: mods-available/eap.j2
+        dest: /etc/freeradius/mods-enabled/eap
+      notify:
+        - restart freeradius
   tags: [ freeradius, freeradius-config, eduroam-idp ]
 
 - name: Configure eduroam-inner-tunnel virtual site
@@ -36,8 +52,19 @@
 - name: Create a users file
   become: yes
   template:
-    src: users.j2
-    dest: /etc/freeradius/users
+    src: mods-config/files/authorize.j2
+    dest: /etc/freeradius/mods-config/files/authorize
+  notify:
+    - restart freeradius
+  tags: [ freeradius, freeradius-config, eduroam-idp ]
+
+- name: Enable the PAM module
+  become: yes
+  file:
+    state: link
+    src: /etc/freeradius/mods-available/pam
+    path: /etc/freeradius/mods-enabled/pam
+  when: use_pam is defined and use_pam
   notify:
     - restart freeradius
   tags: [ freeradius, freeradius-config, eduroam-idp ]

@@ -57,8 +57,8 @@
 - name: Dont strip Operator-Name and related attributes before proxying
   become: yes
   template:
-    src: attrs.pre-proxy.j2
-    dest: /etc/freeradius/attrs.pre-proxy
+    src: mods-config/attr_filter/pre-proxy.j2
+    dest: /etc/freeradius/mods-config/attr_filter/pre-proxy
     mode: 0644
   notify:
     - restart freeradius
@@ -100,9 +100,19 @@
 - name: Add fticks module
   become: yes
   template:
-    src: modules/f_ticks.j2
-    dest: /etc/freeradius/modules/f_ticks
+    src: mods-available/f_ticks.j2
+    dest: /etc/freeradius/mods-available/f_ticks
     mode: 0644
+  notify:
+    - restart freeradius
+  tags: [ freeradius, freeradius-config, eduroam-sp ]
+
+- name: Enable the fticks module
+  become: yes
+  file:
+    state: link
+    src: /etc/freeradius/mods-available/f_ticks
+    path: /etc/freeradius/mods-enabled/f_ticks
   notify:
     - restart freeradius
   tags: [ freeradius, freeradius-config, eduroam-sp ]

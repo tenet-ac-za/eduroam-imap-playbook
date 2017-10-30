@@ -45,16 +45,20 @@ server eduroam-inner-tunnel {
 
 	authorize {
 		auth_log
-		eap {
-			ok = return
-		}
+		filter_username
 {% if use_pam %}
 
 		#  we use suffix here so that the pam_imap module can specify
 		#  it's own realm, but that has implications in the users file
 		suffix
+		update control {
+			&Proxy-To-Realm := LOCAL
+		}
 
 {% endif %}
+		eap {
+			ok = return
+		}
 		files
 		expiration
 		mschap
@@ -70,12 +74,15 @@ server eduroam-inner-tunnel {
 		Auth-Type MS-CHAP {
 			mschap
 		}
+		mschap
 {% if use_pam %}
+
 		Auth-Type PAM {
 			#  Pluggable Authentication Modules
 			pam
 		}
 {% endif %}
+
 		eap
 	}
 
@@ -91,6 +98,9 @@ server eduroam-inner-tunnel {
 		Post-Auth-Type REJECT {
 			reply_log
 			attr_filter.access_reject
+			update outer.session-state {
+				&Module-Failure-Message := &request:Module-Failure-Message
+			}
 		}
 		update outer.reply {
 			User-Name = "%{request:User-Name}"
