@@ -4,7 +4,7 @@
 # https://wiki.geant.org/display/H2eduroam/freeradius-sp
 # (as at v.38 dated 9 August 2017)
 #
-- name: Enable Status-Server
+- name: Sent Access-Reject immediately
   become: yes
   replace:
     path: /etc/freeradius/radiusd.conf
@@ -14,7 +14,27 @@
     - restart freeradius
   tags: [ freeradius, freeradius-config, eduroam-sp ]
 
-- name: Configure eduroam virtual site
+- name: Respond to Status-Server requests.
+  become: yes
+  replace:
+    path: /etc/freeradius/radiusd.conf
+    regexp: "^\\s*status_server\\s*=\\s*(?!yes).*$"
+    replace: "	status_server = yes"
+  notify:
+    - restart freeradius
+  tags: [ freeradius, freeradius-config, eduroam-sp ]
+
+- name: Turn proxying of RADIUS requests on
+  become: yes
+  replace:
+    path: /etc/freeradius/radiusd.conf
+    regexp: "^\\s*proxy_requests\\s*=\\s*(?!yes).*$"
+    replace: "	proxy_requests = yes"
+  notify:
+    - restart freeradius
+  tags: [ freeradius, freeradius-config, eduroam-sp ]
+
+- name: Configure eduroam virtual site from template
   become: yes
   template:
     src: sites-available/eduroam.j2
@@ -57,7 +77,7 @@
     - restart freeradius
   tags: [ freeradius, freeradius-config, eduroam-sp ]
 
-- name: Add client configurations
+- name: Add eduroam FLRS client configurations
   become: yes
   template:
     src: clients.conf.j2
@@ -67,7 +87,7 @@
     - restart freeradius
   tags: [ freeradius, freeradius-config, eduroam-sp ]
 
-- name: Add proxy configurations
+- name: Add eduroam proxy configurations
   become: yes
   template:
     src: proxy.conf.j2

@@ -6,15 +6,18 @@
 #  https://wiki.geant.org/display/H2eduroam/freeradius-sp and
 #  https://wiki.geant.org/display/H2eduroam/freeradius-idp
 #
+#  authorize → authenticate → pre-proxy → [PROXY] → post-proxy → post-auth
+#
 ######################################################################
 
 server eduroam {
 	authorize {
-		# only use filter_username from version > 3.0.7 or > 2.2.8 on
-		filter_username
+		# only use filter_username from version > 3.0.7
+		# filter_username
+		# these normalise MAC addresses
 		rewrite.called_station_id
 		rewrite.calling_station_id
-		if ( 
+		if (
 			{%- for flr in eduroam_flr_servers -%}
 				"%{client:shortname}" != "{{ (flr.hostname|default('unknown')).split('.')|first }}"
 				{%- if not loop.last %} && {% endif -%}
@@ -27,6 +30,7 @@ server eduroam {
 		}
 		# if you want detailed logging
 		auth_log
+		suffix
 		eap {
 			ok = return
 		}
@@ -37,6 +41,8 @@ server eduroam {
 	}
 
 	preacct {
+		rewrite.called_station_id
+		rewrite.calling_station_id
 		suffix
 	}
 

@@ -1,6 +1,8 @@
 # -*- text -*-
 ##
-## proxy.conf -- proxy radius and realm configuration directives
+##  proxy.conf -- proxy radius and realm configuration directives
+##
+##  Per https://wiki.geant.org/display/H2eduroam/freeradius-sp
 ##
 
 #######################################################################
@@ -79,8 +81,8 @@ realm "~\\.3gppnetwork\\.org$" {
     nostrip
 }
 
-# the default destination for unknown realms
-# forward to the upstream FLR servers
+# The default destination for unknown realms - forward to the upstream FLR servers
+# The regex version is required for f_ticks to log properly
 realm "~.+$" {
 	pool = EDUROAM
 	nostrip
