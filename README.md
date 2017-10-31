@@ -22,7 +22,7 @@ The playbook is also (hopefully) self documenting, allowing people who don't mak
 
 ## Roles
 
-This playbook contains two roles, both of which should be usable independently and outside of the playbook.
+This playbook contains a number of roles, all of which should be usable independently and outside of the playbook.
 
 ### [pam-imap](roles/pam-imap)
 
