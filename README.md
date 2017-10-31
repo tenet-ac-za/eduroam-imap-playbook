@@ -65,7 +65,11 @@ rad_eap_test -H localhost -P 1812 -S testing123 -u $USERNAME@$REALM -A anon
 ymous@$REALM -p $PASSWORD -m WPA-EAP -s eduroam -e TTLS -2 PAP
 ```
 
-## Limitations
+## Notes & Limitations
+
+### FreeRADIUS version
+
+Since Ubuntu 16.04 LTS still uses [FreeRADIUS 2.2.8](https://packages.ubuntu.com/xenial/amd64/freeradius), the **freeradius-eduroam-pam** role installs a FreeRADIUS 3.0.x series package from an [Ubuntu PPA](https://launchpad.net/~freeradius/+archive/ubuntu/stable-3.0/). An archived 2.2.x series configuration is [available in a separate branch](https://github.com/safire-ac-za/eduroam-imap-playbook/tree/freeradius-2.x) but, since 2.2.x is end-of-life, no futher work will be done on the branch.
 
 ### EAP-TTLS/PAP
 
