@@ -77,10 +77,8 @@ server eduroam-inner-tunnel {
 		mschap
 {% if use_pam %}
 
-		Auth-Type PAM {
-			#  Pluggable Authentication Modules
-			pam
-		}
+		#  Pluggable Authentication Modules
+		pam
 {% endif %}
 
 		eap
