@@ -60,3 +60,13 @@
     name: freeradius
     state: started
     enabled: yes
+
+- name: Install cleanup task for detail files
+  become: yes
+  copy:
+    src: freeradius-radacctclean.sh
+    dest: /etc/cron.daily/freeradius-radacctclean
+    owner: root
+    group: root
+    mode: 0755
+  tags: freeradius
