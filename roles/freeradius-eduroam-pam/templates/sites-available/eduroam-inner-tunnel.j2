@@ -93,15 +93,40 @@ server eduroam-inner-tunnel {
 
 	post-auth {
 		reply_log
+		if (&outer.request:EAP-Message) {
+			# This copies the real (inner) User-Name to the outer tunnel,
+			# replacing any anonymous identity. This has privacy implications,
+			# but can make debugging and accounting significantly easier
+#			update outer.reply {
+#				&User-Name = "%{request:User-Name}"
+#			}
+
+			# New way of doing use_tunneled_reply = yes
+			# These attributes are for the inner-tunnel only
+			# and MUST NOT be copied to the outer reply.
+			update reply {
+				User-Name !* ANY
+				Message-Authenticator !* ANY
+				EAP-Message !* ANY
+				Proxy-State !* ANY
+				MS-MPPE-Encryption-Types !* ANY
+				MS-MPPE-Encryption-Policy !* ANY
+				MS-MPPE-Send-Key !* ANY
+				MS-MPPE-Recv-Key !* ANY
+			}
+			# Copy reply to outer session, and hence the outer.reply
+			update {
+				&outer.session-state: += &reply:
+			}
+		}
 		Post-Auth-Type REJECT {
 			reply_log
 			attr_filter.access_reject
-			update outer.session-state {
-				&Module-Failure-Message := &request:Module-Failure-Message
+			if (&outer.request:EAP-Message) {
+				update outer.session-state {
+					&Module-Failure-Message := &request:Module-Failure-Message
+				}
 			}
-		}
-		update outer.reply {
-			User-Name = "%{request:User-Name}"
 		}
 	}
 
