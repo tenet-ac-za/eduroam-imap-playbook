@@ -36,6 +36,10 @@ The PAM-specific bits of the configuration are quite limited, and can be disable
 
 The configuration (and the structure of the role) largely follow the GÉANT documentation for [eduroam service providers](https://wiki.geant.org/display/H2eduroam/freeradius-sp) and [eduroam identity providers](https://wiki.geant.org/display/H2eduroam/freeradius-idp). There are some minor differences to reflect later versions of FreeRADIUS, and to leave a little documentation in place. In addition, the role defaults to creating configuration relevant to the [South African NRO](https://eduroam.ac.za/). However, the [documentation](roles/freeradius-eduroam-pam/README.md) explains how to change this.
 
+### [eapol_test](roles/eapol_test)
+
+The **eapol_test** role builds and installs the [eapol_test](http://deployingradius.com/scripts/eapol_test/) and [rad_eap_test](https://github.com/CESNET/rad_eap_test) utilities. These are useful for testing and debugging (see below).
+
 ## Additional configuration
 
 There are a couple of things that are not configured by the playbook and may require additional configuration.
@@ -58,7 +62,7 @@ You can test the inner EAP tunnel line this:
 radtest -t pap $USERNAME@$REALM $PASSWORD localhost:18121 0 testing123
 ```
 
-A complete EAP test can be done with [eapol_test](http://deployingradius.com/scripts/eapol_test/) and [rad_eap_test](https://github.com/CESNET/rad_eap_test) like this:
+A complete EAP test can be done with eapol_test and rad_eap_test like this:
 
 ```bash
 rad_eap_test -H localhost -P 1812 -S testing123 -u $USERNAME@$REALM -A anon

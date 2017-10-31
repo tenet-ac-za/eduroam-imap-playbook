@@ -4,6 +4,7 @@
   roles:
     - pam-imap
     - freeradius-eduroam-pam
+    - eapol_test
 
 # The roles above have deliberately been kept as generic as possible,
 # to permit their reuse for things other than this playbook. Thus we need

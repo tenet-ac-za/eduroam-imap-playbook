@@ -1,4 +1,5 @@
 ---
+# tasks file for eapol_test
 - name: Download wpa_supplicant
   unarchive:
     src: https://w1.fi/releases/wpa_supplicant-{{wpa_supplicant_version}}.tar.gz
@@ -18,14 +19,14 @@
     - libssl-dev
   tags: [ eapol_test, apt ]
 
+- name: Copy build configuration
+  copy:
+    src: debconfig
+    dest: /tmp/wpa_supplicant-{{wpa_supplicant_version}}/wpa_supplicant/.config
+  tags: eapol_test
+
 - name: Build eapol_test
   shell: |2
-    echo 'CONFIG_EAP_MSCHAPV2=y
-    CONFIG_EAP_TLS=y
-    CONFIG_EAP_PEAP=y
-    CONFIG_EAP_TTLS=y
-    CONFIG_BACKEND=file
-    CONFIG_EAPOL_TEST=y' > .config
     make eapol_test
   args:
     chdir: /tmp/wpa_supplicant-{{wpa_supplicant_version}}/wpa_supplicant

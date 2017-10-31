@@ -60,5 +60,3 @@
     name: freeradius
     state: started
     enabled: yes
-
-- import_tasks: "tasks/eapol_test.yml"
