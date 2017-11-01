@@ -28,6 +28,7 @@ server eduroam {
 				# the literal number "1" above is an important prefix! Do not change it!
 			}
 		}
+		cui
 		# if you want detailed logging
 		auth_log
 		suffix
@@ -67,6 +68,7 @@ server eduroam {
 	}
 
 	pre-proxy {
+		cui
 		# if you want detailed logging
 		pre_proxy_log
 		if("%{Packet-Type}" != "Accounting-Request") {

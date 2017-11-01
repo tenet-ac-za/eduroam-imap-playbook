@@ -68,3 +68,13 @@
   notify:
     - restart freeradius
   tags: [ freeradius, freeradius-config, eduroam-idp ]
+
+- name: Seed a secret for Chargeable-User-Identity
+  become: yes
+  replace:
+    path: /etc/freeradius/policy.d/cui
+    regexp: "^cui_hash_key\\s*=\\s*[\"']changeme[\"']?\\s*$"
+    replace: "cui_hash_key = \"{{ lookup('password', '/dev/null') }}\""
+  notify:
+    - restart freeradius
+  tags: [ freeradius, freeradius-config, eduroam-idp ]

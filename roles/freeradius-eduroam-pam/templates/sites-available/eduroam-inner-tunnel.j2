@@ -100,6 +100,8 @@ server eduroam-inner-tunnel {
 #			update outer.reply {
 #				&User-Name = "%{request:User-Name}"
 #			}
+			# Whereas CUI is privacy-preserving
+			cui-inner
 
 			# New way of doing use_tunneled_reply = yes
 			# These attributes are for the inner-tunnel only
