@@ -16,6 +16,7 @@ PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 : ${FREERADIUS_RADACCT_LOGDIR:=/var/log/freeradius/radacct}
 : ${FREERADIUS_RADACCT_RETENTION:=184}
 : ${FREERADIUS_RADACCT_COMPRESSOR:=xz}
+rc=0
 
 case "${FREERADIUS_RADACCT_CLEAN_ENABLE}" in
     [Yy][Ee][Ss])
@@ -30,8 +31,7 @@ case "${FREERADIUS_RADACCT_CLEAN_ENABLE}" in
 			for log in *; do
 				if [ -f ${log} -a ${log} != "*" -a ${log%%.bz2} = ${log} -a ${log%%.xz} = ${log} -a ${log%%.gz} = ${log} ] ; then
 					if [ ${log##*detail-} -le ${yesterday} ] ; then
-						${FREERADIUS_RADACCT_COMPRESSOR} $log
-						rc=1
+						${FREERADIUS_RADACCT_COMPRESSOR} $log || rc=1
 					fi
 				fi
 			done
@@ -44,15 +44,16 @@ case "${FREERADIUS_RADACCT_CLEAN_ENABLE}" in
 				if [ -f ${log} -a ${log} != "*.bz2" -a ${log} != "*.xz" -a ${log} != "*.gz" ] ; then
 					log_munged=${log##*detail-}
 					if [ ${log_munged%%.[bx]z*} -lt ${stale} ] ; then
-						rm -f ${nas}/${log}
-						rc=1
+						rm -f ${nas}/${log} || rc=1
 					fi
 				fi
 			done
 		done
     ;;
 
-    *)  rc=0;;
+    *)
+		echo "To enable, set FREERADIUS_RADACCT_CLEAN_ENABLE=yes in /etc/default/freeradius-radacctclean"
+		rc=0;;
 esac
 
 exit $rc
