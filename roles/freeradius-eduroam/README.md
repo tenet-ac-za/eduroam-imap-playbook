@@ -1,5 +1,5 @@
-freeradius-pam-eduroam Ansible role
-===================================
+freeradius-eduroam Ansible role
+===============================
 
 Install FreeRADIUS and configure it to use PAM for EAP authentication in a way that is compatible with eduroam.
 
@@ -15,22 +15,33 @@ FreeRADIUS config is largely in accordance with GÉANT's documentation, availabl
 Role Variables
 --------------
 
+### Basic eduroam configuration:
+
  * `eduroam_flr_servers` - a list of eduroam federation-level RADIUS servers. For each server, the following should be provided (defaults to using the South African eduroam FLR servers):
    * `name` - hostname of the FLR server
    * `ip` - IP address of the FLR server
    * `port` - port of the FLR server
    * `secret` - the RADIUS secret negotiated with the NRO/FLR operator
  * `radius_realm` - the Realm to use for your users, typically your primary DNS domain name (defaults to `example.ac.za`)
- * `radius_test_account`
+ * `radius_local_users` - a list of local "files" users to create. For each user, the following should be provided (defaults to creating an nren_radius_test user):
    * `username`
    * `password`
- * `pam_service_name` - the name of the PAM service we should install (defaults to `radiusd`)
- * `use_pam` - set to `no` to disable use of PAM, in which case this becomes a genericish role to make eduroam work (defaults to `yes`)
+
+### Authentication backend configuration:
+   
+ * Pluggable Authentication Module (PAM)
+   * `use_pam` - set to `yes` to enable use of PAM for authentication (defaults to `no`)
+   * `pam_service_name` - the name of the PAM service we should install (defaults to `radiusd`)
+
+### Optional enhancements:
+
+ * `send_cui` - whether to send Chargeable-User-Identity (defaults to `yes`)
+ * `send_username` - whether to send a real User-Name back (defaults to `no`). Setting this to `yes` has privacy implications, but can be useful for debugging.
 
 Dependencies
 ------------
 
-This role is intended to be used in conjunction with the pam-imap role.
+Since Ubuntu 16.04 LTS still uses [FreeRADIUS 2.2.8](https://packages.ubuntu.com/xenial/amd64/freeradius), this role installs a FreeRADIUS 3.0.x series package from an [Ubuntu PPA](https://launchpad.net/~freeradius/+archive/ubuntu/stable-3.0/).
 
 Example Playbook
 ----------------

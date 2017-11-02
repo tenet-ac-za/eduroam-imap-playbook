@@ -1,5 +1,5 @@
 ---
-# defaults file for freeradius-eduroam-pam
+# defaults file for freeradius-eduroam
 
 # Everything below should be overridden, and are here merely to make
 # sure we have something to work with when the templating engine runs
@@ -13,8 +13,12 @@ eduroam_flr_servers:
     port: 1812
     secret: MySharedSecret
 radius_realm: example.ac.za
-radius_test_account:
-  username: nren_radius_test
-  password: PleaseChangeThisPassword
-use_pam: yes
+radius_local_users:
+  - username: nren_radius_test
+    password: PleaseChangeThisPassword
+
+use_pam: no
 pam_service_name: radiusd
+
+send_cui: yes
+send_username: no

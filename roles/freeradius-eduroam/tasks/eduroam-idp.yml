@@ -75,6 +75,7 @@
     path: /etc/freeradius/policy.d/cui
     regexp: "^cui_hash_key\\s*=\\s*[\"']changeme[\"']?\\s*$"
     replace: "cui_hash_key = \"{{ lookup('password', '/dev/null') }}\""
+  when: send_cui is defined and send_cui
   notify:
     - restart freeradius
   tags: [ freeradius, freeradius-config, eduroam-idp ]

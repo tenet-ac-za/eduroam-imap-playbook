@@ -14,10 +14,10 @@ eduroam_flr_servers:
 # Your realm for eduroam (usually your primary DNS name)
 radius_realm: example.ac.za
 
-# Details of a test account to create within your realm
-radius_test_account:
-  username: nren_radius_test
-  password: PleaseChangeThisPassword
+# Details of test account(s) to create within your realm
+radius_local_users:
+  - username: nren_radius_test
+    password: PleaseChangeThisPassword
 
 # Details of your IMAP server
 imap_server: imap.gmail.com

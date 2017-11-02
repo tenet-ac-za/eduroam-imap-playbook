@@ -1,5 +1,5 @@
 ---
-# tasks file for freeradius-eduroam-pam
+# tasks file for freeradius-eduroam
 - name: Use the unofficial FreeRADIUS PPA to get 3.x
   become: yes
   apt_repository:

@@ -3,7 +3,7 @@
   hosts: all
   roles:
     - pam-imap
-    - freeradius-eduroam-pam
+    - { role: freeradius-eduroam, use_pam: yes }
     - eapol_test
 
 # The roles above have deliberately been kept as generic as possible,

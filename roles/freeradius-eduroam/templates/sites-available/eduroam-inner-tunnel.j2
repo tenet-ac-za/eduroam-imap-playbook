@@ -47,15 +47,13 @@ server eduroam-inner-tunnel {
 		auth_log
 		filter_username
 {% if use_pam %}
-
 		#  we use suffix here so that the pam_imap module can specify
 		#  it's own realm, but that has implications in the users file
 		suffix
+{% endif %}
 		update control {
 			&Proxy-To-Realm := LOCAL
 		}
-
-{% endif %}
 		eap {
 			ok = return
 		}
@@ -92,16 +90,17 @@ server eduroam-inner-tunnel {
 	}
 
 	post-auth {
+		# This sets a Chargeable-User-Identity, remember to set cui_hash_key
+		# in policy.d/cui so your users' privacy is preserved
+{{ "" if send_cui else "#"     }}		cui-inner
 		reply_log
 		if (&outer.request:EAP-Message) {
 			# This copies the real (inner) User-Name to the outer tunnel,
 			# replacing any anonymous identity. This has privacy implications,
 			# but can make debugging and accounting significantly easier
-#			update outer.reply {
-#				&User-Name = "%{request:User-Name}"
-#			}
-			# Whereas CUI is privacy-preserving
-			cui-inner
+{{ "" if send_username else "#" }}			update outer.reply {
+{{ "" if send_username else "#" }}				&User-Name = "%{request:User-Name}"
+{{ "" if send_username else "#" }}			}
 
 			# New way of doing use_tunneled_reply = yes
 			# These attributes are for the inner-tunnel only

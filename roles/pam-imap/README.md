@@ -22,7 +22,7 @@ Role Variables
 Dependencies
 ------------
 
-This role is intended to be used in conjunction with the freeradius-pam-eduroam role.
+This role is intended to be used in conjunction with the freeradius-eduroam role with `use_pam` enabled.
 
 Example Playbook
 ----------------

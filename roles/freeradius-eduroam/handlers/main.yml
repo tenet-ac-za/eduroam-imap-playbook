@@ -1,5 +1,5 @@
 ---
-# handlers file for freeradius-eduroam-pam
+# handlers file for freeradius-eduroam
 - name: restart freeradius
   become: yes
   systemd:

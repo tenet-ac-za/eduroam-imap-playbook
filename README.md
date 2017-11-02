@@ -28,13 +28,11 @@ This playbook contains a number of roles, all of which should be usable independ
 
 The **pam-imap** role downloads, compiles, installs, and configures the [pam-imap](https://github.com/wdoekes/pam-imap) pluggable authentication module. This PAM module allows for authentication against an IMAP server. By default, this is configured to be `imap.gmail.com`. See the [documentation](roles/pam-imap/README.md) for how to change this.
 
-### [freeradius-eduroam-pam](roles/freeradius-eduroam-pam)
+### [freeradius-eduroam](roles/freeradius-eduroam)
 
-The **freeradius-eduroam-pam** role installs and configures FreeRADIUS to make use PAM for eduroam EAP authentication.
+The **freeradius-eduroam** role installs and configures FreeRADIUS for eduroam EAP authentication. In the context of this IMAP playbook, it configures it to use PAM as an authentication backend.
 
-The PAM-specific bits of the configuration are quite limited, and can be disabled by setting `use_pam: no`. This allows the role to be re-used more generically to set up an eduroam IdP.
-
-The configuration (and the structure of the role) largely follow the GÉANT documentation for [eduroam service providers](https://wiki.geant.org/display/H2eduroam/freeradius-sp) and [eduroam identity providers](https://wiki.geant.org/display/H2eduroam/freeradius-idp). There are some minor differences to reflect later versions of FreeRADIUS, and to leave a little documentation in place. In addition, the role defaults to creating configuration relevant to the [South African NRO](https://eduroam.ac.za/). However, the [documentation](roles/freeradius-eduroam-pam/README.md) explains how to change this.
+The configuration (and the structure of the role) largely follow the GÉANT documentation for [eduroam service providers](https://wiki.geant.org/display/H2eduroam/freeradius-sp) and [eduroam identity providers](https://wiki.geant.org/display/H2eduroam/freeradius-idp). There are some minor differences to reflect later versions of FreeRADIUS, and to leave a little documentation in place. In addition, the role defaults to creating configuration relevant to the [South African NRO](https://eduroam.ac.za/). However, the [documentation](roles/freeradius-eduroam/README.md) explains how to change this.
 
 ### [eapol_test](roles/eapol_test)
 
@@ -73,11 +71,11 @@ ymous@$REALM -p $PASSWORD -m WPA-EAP -s eduroam -e TTLS -2 PAP
 
 ### FreeRADIUS version
 
-Since Ubuntu 16.04 LTS still uses [FreeRADIUS 2.2.8](https://packages.ubuntu.com/xenial/amd64/freeradius), the **freeradius-eduroam-pam** role installs a FreeRADIUS 3.0.x series package from an [Ubuntu PPA](https://launchpad.net/~freeradius/+archive/ubuntu/stable-3.0/). An archived 2.2.x series configuration is [available in a separate branch](https://github.com/safire-ac-za/eduroam-imap-playbook/tree/freeradius-2.x) but, since 2.2.x is end-of-life, no futher work will be done on the branch.
+Since Ubuntu 16.04 LTS still uses [FreeRADIUS 2.2.8](https://packages.ubuntu.com/xenial/amd64/freeradius), the **freeradius-eduroam** role installs a FreeRADIUS 3.0.x series package from an [Ubuntu PPA](https://launchpad.net/~freeradius/+archive/ubuntu/stable-3.0/). An archived 2.2.x series configuration is [available in a separate branch](https://github.com/safire-ac-za/eduroam-imap-playbook/tree/freeradius-2.x) but, since 2.2.x is end-of-life, no futher work will be done on the branch.
 
 ### EAP-TTLS/PAP
 
-Because FreeRADIUS has no access to a cleartext password, only PAP can be used as an inner/phase two authentication method. This typically means you need to configure clients to use TTLS/PAP (PEAP/MSCHAPv2 will **not** work). This was not originally supported out-the-box by Windows, but Windows 10 now includes a TTLS supplicant. Likewise Android and wpasupplicant on Linux both support TTLS.
+Because FreeRADIUS has no access to a cleartext password when authenticating via PAM, only PAP can be used as an inner/phase two authentication method. This typically means you need to configure clients to use TTLS/PAP (PEAP/MSCHAPv2 will **not** work). This was not originally supported out-the-box by Windows, but Windows 10 now includes a TTLS supplicant. Likewise Android and wpasupplicant on Linux both support TTLS.
 
 ### Scalability
 
