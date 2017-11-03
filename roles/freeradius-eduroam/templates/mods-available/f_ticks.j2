@@ -11,7 +11,7 @@ linelog f_ticks {
 	format = ""
 	reference = "f_ticks.%{{ '{%' }}{reply:Packet-Type}:-format}"
 	f_ticks {
-		Access-Accept = "F-TICKS/eduroam/1.0#REALM=%{Realm}#VISCOUNTRY={{radius_realm.split('.')|last|upper}}#VISINST=%{Operator-Name}#CSI=%{Calling-Station-Id}#RESULT=OK#"
-		Access-Reject = "F-TICKS/eduroam/1.0#REALM=%{Realm}#VISCOUNTRY={{radius_realm.split('.')|last|upper}}#VISINST=%{Operator-Name}#CSI=%{Calling-Station-Id}#RESULT=FAIL#"
+		Access-Accept = "F-TICKS/eduroam/1.0#REALM=%{Realm}#VISCOUNTRY=%{Eduroam-SP-Country}#VISINST=%{Operator-Name}#CSI=%{Calling-Station-Id}#RESULT=OK#"
+		Access-Reject = "F-TICKS/eduroam/1.0#REALM=%{Realm}#VISCOUNTRY=%{Eduroam-SP-Country}#VISINST=%{Operator-Name}#CSI=%{Calling-Station-Id}#RESULT=FAIL#"
 	}
 }
