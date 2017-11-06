@@ -20,5 +20,13 @@ radius_local_users:
 use_pam: no
 pam_service_name: radiusd
 
+use_ldap: no
+ldap_is_edir: no
+ldap_servers:
+  - hostname: localhost
+    port: 389
+    base_dn: dc=example,dc=org
+    start_tls: yes
+
 send_cui: yes
 send_username: no

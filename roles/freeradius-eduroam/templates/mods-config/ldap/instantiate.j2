@@ -1,0 +1,5 @@
+redundant-load-balance ldap {
+{% for server in ldap_servers %}
+	ldap_{{loop.index}}	# {{server.hostname}}:{{server.port|default("")}}
+{% endfor %}
+}

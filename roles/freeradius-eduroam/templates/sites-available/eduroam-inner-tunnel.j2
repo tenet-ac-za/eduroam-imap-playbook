@@ -46,9 +46,10 @@ server eduroam-inner-tunnel {
 	authorize {
 		auth_log
 		filter_username
-{% if use_pam %}
-		#  we use suffix here so that the pam_imap module can specify
-		#  it's own realm, but that has implications in the users file
+{% if use_ldap or use_pam %}
+		#  we use suffix here so that the authentication module (e.g. PAM,
+		#  LDAP) can specify it's own realm if needed, but that has
+		#  implications in the users file
 		suffix
 {% endif %}
 		update control {
@@ -57,6 +58,11 @@ server eduroam-inner-tunnel {
 		eap {
 			ok = return
 		}
+{% if use_ldap %}
+		-ldap {
+			notfound = return
+		}
+{% endif %}
 		files
 		expiration
 		mschap
@@ -78,6 +84,15 @@ server eduroam-inner-tunnel {
 		#  Pluggable Authentication Modules
 		pam
 {% endif %}
+{% if use_ldap %}
+
+		# LDAP servers generally don't make good authentication backends
+		# because they have no access to cleartext passwords. Thus by doing
+		# this you are limiting the EAP authentication methods you support.
+		Auth-Type LDAP {
+			ldap
+		}
+{% endif %}
 
 		eap
 	}
@@ -90,6 +105,10 @@ server eduroam-inner-tunnel {
 	}
 
 	post-auth {
+{% if use_ldap and ldap_is_edir is defined and ldap_is_edir %}
+		# Support 'edir_account_policy_check = yes'
+		ldap
+{% endif %}
 		# This sets a Chargeable-User-Identity, remember to set cui_hash_key
 		# in policy.d/cui so your users' privacy is preserved
 {{ "" if send_cui else "#"     }}		cui-inner
@@ -121,6 +140,9 @@ server eduroam-inner-tunnel {
 			}
 		}
 		Post-Auth-Type REJECT {
+{% if use_ldap and ldap_is_edir is defined and ldap_is_edir %}
+			ldap
+{% endif %}
 			reply_log
 			attr_filter.access_reject
 			if (&outer.request:EAP-Message) {

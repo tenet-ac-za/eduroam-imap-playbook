@@ -4,8 +4,8 @@
 ##  through this file.  Instead, see 'acct_users', in this directory.
 ##
 
-{% if use_pam %}
-# You can include local (non-PAM) users like this:
+{% if use_pam or use_ldap %}
+# You can include local (non-{{ "PAM" if use_pam else "LDAP"}}) users like this:
 
 # icecold	Realm == "{{radius_realm}}", Cleartext-Password := "snowwhite"
 
@@ -19,7 +19,7 @@
 {% endif %}
 {% for u in radius_local_users %}
 
-{% if use_pam %}
+{% if use_pam or use_ldap %}
 {{u.username|default("nren_radius_test")}}	Realm == "{{radius_realm}}", Cleartext-Password := "{{u.password|default("PleaseChangeThisPassword")}}"
 {% else %}
 {{u.username|default("nren_radius_test")}}@{{radius_realm}}	Cleartext-Password := "{{u.password|default("PleaseChangeThisPassword")}}"

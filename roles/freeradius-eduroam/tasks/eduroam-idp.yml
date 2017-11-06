@@ -69,6 +69,54 @@
     - restart freeradius
   tags: [ freeradius, freeradius-config, eduroam-idp ]
 
+- name: Override the ldap module config in the FreeRADIUS approved way
+  become: yes
+  block:
+    - name: Check whether we've overwritten the default ldap module
+      stat:
+        path: /etc/freeradius/mods-enabled/ldap
+        follow: no
+        get_attributes: no
+        get_checksum: no
+        get_md5: no
+        get_mime: no
+      register: ldap
+    - name: Disable the default ldap module
+      file:
+        path: /etc/freeradius/mods-enabled/ldap
+        state: absent
+      when: ldap.stat.islnk is defined and ldap.stat.islnk
+    - name: Install a new eduroam-ish ldap module
+      template:
+        src: mods-available/ldap.j2
+        dest: /etc/freeradius/mods-enabled/ldap
+      notify:
+        - restart freeradius
+  when: use_ldap is defined and use_ldap
+  tags: [ freeradius, freeradius-config, eduroam-idp ]
+
+- name: Create an ldap instantiation config
+  become: yes
+  block:
+     - name: create ldap mods-config directory
+       file:
+         path: /etc/freeradius/mods-config/ldap
+         state: directory
+         mode: 0755
+     - name: create an ldap instantiation config in mods-config
+       template:
+         src: mods-config/ldap/instantiate.j2
+         dest: /etc/freeradius/mods-config/ldap/instantiate
+     - name: add a line to the instantiate block
+       lineinfile:
+         path: /etc/freeradius/radiusd.conf
+         regexp: "^\\$INCLUDE mods-config/ldap/instantiate"
+         line: "$INCLUDE mods-config/ldap/instantiate"
+         state: present
+         insertafter: "^instantiate\\s*{"
+  when: use_ldap is defined and use_ldap
+  tags: [ freeradius, freeradius-config, eduroam-idp ]
+
 - name: Seed a secret for Chargeable-User-Identity
   become: yes
   replace:

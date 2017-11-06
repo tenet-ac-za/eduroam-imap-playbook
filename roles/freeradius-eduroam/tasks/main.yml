@@ -23,6 +23,14 @@
     - freeradius
   tags: [ freeradius, apt ]
 
+- name: Install FreeRADIUS LDAP module from Apt
+  become: yes
+  apt:
+    name: freeradius-ldap
+    state: present
+  when: use_ldap is defined and use_ldap
+  tags: [ freeradius, apt ]
+
 - import_tasks: "tasks/eduroam-sp.yml"
 
 - import_tasks: "tasks/eduroam-idp.yml"

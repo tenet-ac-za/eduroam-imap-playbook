@@ -1,0 +1,85 @@
+# -*- text -*-
+#
+#  Lightweight Directory Access Protocol (LDAP)
+#
+
+{% for server in ldap_servers %}
+
+ldap ldap_{{loop.index}} {
+	server = '{{server.hostname|default("localhost")}}'
+	port = {{server.port|default("389")}}
+{% if server.identity is defined and server.identity %}
+	identity = '{{server.identity}}'
+	password = {{server.password|default("''")}}
+{% endif %}
+	base_dn = '{{server.base_dn|default("dc=example,dc=org")}}'
+
+	#
+	#  Mapping of LDAP directory attributes to RADIUS dictionary attributes.
+	#
+	update {
+		control:Password-With-Header	+= 'userPassword'
+#		control:NT-Password		:= 'ntPassword'
+		control:			+= 'radiusControlAttribute'
+		request:			+= 'radiusRequestAttribute'
+		reply:				+= 'radiusReplyAttribute'
+	}
+
+	#  Set to yes if you have eDirectory and want to use the universal
+	#  password mechanism.
+	edir = {{"yes" if ldap_is_edir else "no"}}
+
+	#  Set to yes if you want to bind as the user after retrieving the
+	#  Cleartext-Password. This will consume the login grace, and
+	#  verify user authorization.
+	edir_autz = {{"yes" if ldap_is_edir else "no"}}
+
+	user {
+		base_dn = "${..base_dn}"
+		filter = "{{server.user_filter|default("(uid=%{%{Stripped-User-Name}:-%{User-Name}})")}}"
+		scope = '{{server.scope|default("sub")}}'
+	}
+
+	group {
+		base_dn = "${..base_dn}"
+		filter = '{{server.group_filter|default("(objectClass=posixGroup)")}}'
+		scope = '{{server.scope|default("sub")}}'
+		membership_attribute = '{{server.group_member_attr|default("memberOf")}}'
+	}
+
+	options {
+#		dereference = 'always'
+		chase_referrals = yes
+		rebind = yes
+		res_timeout = 10
+		srv_timelimit = 3
+		net_timeout = 1
+		idle = 60
+		probes = 3
+		interval = 3
+		ldap_debug = 0x0028
+	}
+
+	tls {
+		start_tls = {{ "yes" if server.start_tls is defined and server.start_tls else "no"}}
+#		ca_file	= ${certdir}/cacert.pem
+#		ca_path	= ${certdir}
+#		certificate_file = /path/to/radius.crt
+#		private_key_file = /path/to/radius.key
+#		random_file = /dev/urandom
+		require_cert	= 'allow'
+	}
+
+	pool {
+		start = 0
+		min = ${thread[pool].min_spare_servers}
+		max = ${thread[pool].max_servers}
+		spare = ${thread[pool].max_spare_servers}
+		uses = 0
+		retry_delay = 30
+		lifetime = 0
+		idle_timeout = 60
+	}
+}
+
+{% endfor %}
