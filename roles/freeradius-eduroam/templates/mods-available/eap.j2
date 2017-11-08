@@ -19,6 +19,13 @@ eap {
 	cisco_accounting_username_bug = no
 	max_sessions = ${max_requests}
 
+	## Generic Token Card.
+	#
+	# Really a User-Password - see https://wiki.geant.org/display/H2eduroam/eap-types#eap-types-choices
+	gtc {
+		auth_type = PAP
+	}
+
 	## Common TLS configuration for TLS-based EAP types
 	#
 	#  Note that you should NOT use a globally known CA here!
