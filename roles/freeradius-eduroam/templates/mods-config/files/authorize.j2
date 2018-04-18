@@ -9,13 +9,13 @@
 
 # icecold	Realm == "{{radius_realm}}", Cleartext-Password := "snowwhite"
 
-# otheruser	Realm == "{{radius_realm}}", Cleartext-Password := "swordfish"
+# otheruser	Realm == "{{radius_realm}}", Cleartext-Password := "swordfish", Expiration := "25 May 2099"
 {% else %}
 # You can include local users like this:
 
 # icecold@{{radius_realm}}	Cleartext-Password := "snowwhite"
 
-# otheruser@{{radius_realm}}	Cleartext-Password := "swordfish"
+# otheruser@{{radius_realm}}	Cleartext-Password := "swordfish", Expiration := "25 May 2099"
 {% endif %}
 {% for u in radius_local_users %}
 
