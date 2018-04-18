@@ -51,9 +51,11 @@ home_server {{flr.hostname.split('.')|first}} {
 home_server_pool EDUROAM {
 	type = fail-over
 	#
-	# The order of the home_server entries in the pool is important.  You
-	# should put the one that's geographically closest to you (i.e. has the
-	# lowest ping time/latency) at the top of the list so you try it first.
+	# The order of the home_server entries in the pool is important,
+	# and your NRO can tell you the right order for your country.
+	# For example you may be asked to put the one that's geographically
+	# closest to you (i.e. has the lowest ping time/latency) at the
+	# top of the list so you try it first.
 	#
 {% for flr in eduroam_flr_servers %}
 	home_server = {{flr.hostname.split('.')|first}}
