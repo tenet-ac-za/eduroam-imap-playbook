@@ -11,6 +11,35 @@
 ######################################################################
 
 server eduroam {
+	# Configure this virtual server to listen on all available
+	# IPv4 and IPv6 addresses on the default ports for auth+acct
+	#
+	# This duplicates what's in sites-available/default, which is
+	# enabled by default and thus is commented out here. You can
+	# EITHER rely on the default virtual server to bind your ports,
+	# OR you can disable it by deleting the symlink from
+	# sites-enabled/default and then uncomment listen here.
+#	listen {
+#		type = "auth"
+#		ipaddr = *
+#		port = 0
+#	}
+#	listen {
+#		type = "acct"
+#		ipaddr = *
+#		port = 0
+#	}
+#	listen {
+#		type = "auth"
+#		ipv6addr = ::
+#		port = 0
+#	}
+#	listen {
+#		type = "acct"
+#		ipv6addr = ::
+#		port = 0
+#	}
+
 	authorize {
 		# only use filter_username from version > 3.0.7
 		filter_username
