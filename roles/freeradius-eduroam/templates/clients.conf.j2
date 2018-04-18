@@ -1,5 +1,39 @@
 # -*- text -*-
 ##
+## clients.conf -- client configuration directives
+##
+## Per https://wiki.geant.org/display/H2eduroam/freeradius-sp
+##
+client localhost {
+        ipaddr = 127.0.0.1
+        secret = testing123
+        nastype = other
+}
+
+##
+## If you are running an eduroam SP, you should include details
+## of your wireless infrastructure here.
+##
+
+#client antarctica-access-point-1 {
+#	ipaddr = 172.25.1.55
+#	netmask = 32
+#	secret = yoursecret12345
+#	shortname = southpole-11g
+#	virtual_server = eduroam
+#	require_message_authenticator = yes
+#}
+
+#client antarctica-access-point-2 {
+#	ipv6addr = 2001:db8:1:789::56
+#	netmask = 128
+#	secret = yoursecretABCDE
+#	shortname = southpole-11n
+#	virtual_server = eduroam
+#	require_message_authenticator = yes
+#}
+
+##
 ## These are the eduroam FLR servers for your country
 ##
 {% for flr in eduroam_flr_servers %}
@@ -13,3 +47,4 @@ client {{flr.hostname}} {
 }
 
 {% endfor %}
+
