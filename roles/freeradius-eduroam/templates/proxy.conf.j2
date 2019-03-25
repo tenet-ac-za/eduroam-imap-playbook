@@ -78,11 +78,6 @@ realm {{radius_realm}} {
 realm "~.+\\.{{radius_realm|replace('.','\\\\.')}}$" {
 }
 
-# blackhole routing - EAP-SIM/MNOs
-realm "~\\.3gppnetwork\\.org$" {
-    nostrip
-}
-
 # The default destination for unknown realms - forward to the upstream FLR servers
 # The regex version is required for f_ticks to log properly
 realm "~.+$" {
