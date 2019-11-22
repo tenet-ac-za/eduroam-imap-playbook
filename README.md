@@ -4,6 +4,8 @@ This is an [Ansible playbook](http://docs.ansible.com/ansible/latest/playbooks.h
 
 Our main use-case for this is allowing [Google GSuite](https://gsuite.google.com/) users to authenticate on eduroam. However, the concept should be extensible to any IMAP server.
 
+_**Note:** The original use case for this was for small organisations that only had hosted infrastructure. However that use case has now largely been met by the [eduroam Managed IdP](https://www.eduroam.org/eduroam-managed-idp/) service. You are strongly encouraged to look at Managed IdP rather than deploying this playbook._
+
 ## Using the playbook
 
 All configuration happens in [group_vars/all](group_vars/all). You should edit that file to suit your enviroment.
