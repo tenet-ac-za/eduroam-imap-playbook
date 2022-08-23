@@ -1,3 +1,5 @@
+> *This playbook was developed in support of a [TNC18](https://tnc18.geant.org/) lightning talk [about using GSuite for eduroam](https://tnc18.geant.org/core/presentation/226.html). However, since then, a substantially more scalable alternative has become available: [geteduroam](https://github.com/geteduroam). While the ideas here may be useful (hence archiving the respository), you're strongly encouraged to look to geteduroam for any production use.*
+
 # eduroam-imap-playbook Ansible playbook
 
 This is an [Ansible playbook](http://docs.ansible.com/ansible/latest/playbooks.html) to set up [eduroam](https://eduroam.org/) authentication against an IMAP server.
