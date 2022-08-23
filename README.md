@@ -1,12 +1,10 @@
-> *This playbook was developed in support of a [TNC18](https://tnc18.geant.org/) lightning talk [about using GSuite for eduroam](https://tnc18.geant.org/core/presentation/226.html). However, since then, a substantially more scalable alternative has become available: [geteduroam](https://github.com/geteduroam). While the ideas here may be useful (hence archiving the respository), you're strongly encouraged to look to geteduroam for any production use.*
+> _This playbook was developed in support of a [TNC18](https://tnc18.geant.org/) lightning talk [about using GSuite for eduroam](https://tnc18.geant.org/core/presentation/226.html). However, since then, two substantially more scalable alternatives have become available: [eduroam Managed IdP](https://www.eduroam.org/eduroam-managed-idp/) & [geteduroam](https://github.com/geteduroam). While the ideas here may be useful (hence archiving the respository), you're strongly encouraged to look to deploying geteduroam for any production use._
 
 # eduroam-imap-playbook Ansible playbook
 
 This is an [Ansible playbook](http://docs.ansible.com/ansible/latest/playbooks.html) to set up [eduroam](https://eduroam.org/) authentication against an IMAP server.
 
 Our main use-case for this is allowing [Google GSuite](https://gsuite.google.com/) users to authenticate on eduroam. However, the concept should be extensible to any IMAP server.
-
-_**Note:** The original use case for this was for small organisations that only had hosted infrastructure. However that use case has now largely been met by the [eduroam Managed IdP](https://www.eduroam.org/eduroam-managed-idp/) service. You are strongly encouraged to look at Managed IdP rather than deploying this playbook._
 
 ## Using the playbook
 
